@@ -94,6 +94,26 @@ namespace cppmicroservices
                 }
             }
 
+            void
+            waitForAllPostedTasksToRun() override
+            {
+                if (threadpool)
+                {
+                    try
+                    {
+                        threadpool->join();
+                    }
+                    catch (...)
+                    {
+                        auto exceptionPtr = std::current_exception();
+                        std::string msg = "An exception has occurred while trying to shutdown "
+                                          "the fallback cppmicroservices::async::AsyncWorkService "
+                                          "instance.";
+                        logger->Log(cppmicroservices::logservice::SeverityLevel::LOG_WARNING, msg, exceptionPtr);
+                    }
+                }
+            }
+
           private:
             std::shared_ptr<boost::asio::thread_pool> threadpool;
             std::shared_ptr<cppmicroservices::logservice::LogService> logger;
@@ -177,10 +197,14 @@ namespace cppmicroservices
             auto currAsync = std::atomic_load(&asyncWorkService);
             if (service == currAsync)
             {
-                // replace existing asyncWorkService with a nullptr asyncWorkService
+                auto oldWorkService = currAsync;
+                // replace existing asyncWorkService with a fallback asyncWorkService
                 std::shared_ptr<cppmicroservices::async::AsyncWorkService> newService
                     = std::make_shared<FallbackAsyncWorkService>(logger);
                 std::atomic_store(&asyncWorkService, newService);
+
+                // wait for all running tasks to finish
+                oldWorkService->waitForAllPostedTasksToRun();
             }
         }
 

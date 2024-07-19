@@ -27,11 +27,45 @@
 #include <cppmicroservices/BundleContext.h>
 #include <cppmicroservices/ServiceReference.h>
 
+#include <condition_variable>
+#include <mutex>
 #include <random>
 #include <string>
 
 namespace test
 {
+
+    // TODO: performs the same as std::barrier
+    // replace when upgraded to c++20
+    class Barrier
+    {
+      public:
+        Barrier(std::size_t count) : threshold(count), count(count), generation(0) {}
+
+        void
+        Wait()
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            auto gen = generation;
+            if (--count == 0)
+            {
+                generation++;
+                count = threshold;
+                cond.notify_all();
+            }
+            else
+            {
+                cond.wait(lock, [this, gen] { return gen != generation; });
+            }
+        }
+
+      private:
+        std::mutex mutex;
+        std::condition_variable cond;
+        std::size_t threshold;
+        std::size_t count;
+        std::size_t generation;
+    };
 
     template <typename Task, typename Predicate>
     bool

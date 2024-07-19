@@ -123,6 +123,29 @@ namespace test
             boost::asio::post(threadpool->get_executor(), [handler = std::move(handler)]() mutable { handler(); });
         }
 
+        void
+        waitForAllPostedTasksToRun() override
+        {
+            try
+            {
+                if (threadpool)
+                {
+                    try
+                    {
+                        threadpool->join();
+                    }
+                    catch (...)
+                    {
+                        //
+                    }
+                }
+            }
+            catch (...)
+            {
+                //
+            }
+        }
+
       private:
         std::shared_ptr<boost::asio::thread_pool> threadpool;
     };
@@ -287,10 +310,9 @@ namespace test
 
     INSTANTIATE_TEST_SUITE_P(AsyncWorkServiceEndToEndParameterized,
                              TestAsyncWorkServiceEndToEnd,
-                             testing::Values(
-                                 std::make_shared<AsyncWorkServiceThreadPool>(1),
-                                 std::make_shared<AsyncWorkServiceThreadPool>(8),
-                                 std::make_shared<AsyncWorkServiceThreadPool>(20)));
+                             testing::Values(std::make_shared<AsyncWorkServiceThreadPool>(1),
+                                             std::make_shared<AsyncWorkServiceThreadPool>(8),
+                                             std::make_shared<AsyncWorkServiceThreadPool>(20)));
 
     TEST_P(TestAsyncWorkServiceEndToEnd, TestEndToEndBehaviorWithAsyncWorkService)
     {
@@ -367,4 +389,159 @@ namespace test
         ASSERT_TRUE(service) << "GetService failed for CAInterface.";
     }
 
+    class postWithSynchronization : public cppmicroservices::async::AsyncWorkService
+    {
+      public:
+        postWithSynchronization() = default;
+        virtual ~postWithSynchronization() = default;
+        virtual void postWithSync(std::packaged_task<void()>&&, std::shared_ptr<Barrier>) {};
+    };
+
+    class AsyncWorkServiceThreadPoolWithSync : public postWithSynchronization
+    {
+      public:
+        AsyncWorkServiceThreadPoolWithSync(int nThreads) : postWithSynchronization()
+        {
+            threadpool = std::make_shared<boost::asio::thread_pool>(nThreads);
+        }
+
+        ~AsyncWorkServiceThreadPoolWithSync() override
+        {
+            try
+            {
+                if (threadpool)
+                {
+                    try
+                    {
+                        threadpool->stop();
+                    }
+                    catch (...)
+                    {
+                        //
+                    }
+                }
+            }
+            catch (...)
+            {
+                //
+            }
+        }
+
+        void
+        post(std::packaged_task<void()>&& task) override
+        {
+            using Sig = void();
+            using Result = boost::asio::async_result<decltype(task), Sig>;
+            using Handler = typename Result::completion_handler_type;
+
+            Handler handler(std::forward<decltype(task)>(task));
+            Result result(handler);
+
+            boost::asio::post(threadpool->get_executor(), [handler = std::move(handler)]() mutable { handler(); });
+        }
+
+        void
+        postWithSync(std::packaged_task<void()>&& task, std::shared_ptr<Barrier> barrier) override
+        {
+            using Sig = void();
+            using Result = boost::asio::async_result<decltype(task), Sig>;
+            using Handler = typename Result::completion_handler_type;
+
+            Handler handler(std::forward<decltype(task)>(task));
+            Result result(handler);
+
+            barrier->Wait();
+
+            boost::asio::post(threadpool->get_executor(), [handler = std::move(handler)]() mutable { handler(); });
+        }
+
+        void
+        waitForAllPostedTasksToRun() override
+        {
+            if (threadpool)
+            {
+                try
+                {
+                    threadpool->join();
+                }
+                catch (...)
+                {
+                    //
+                }
+            }
+        }
+
+      private:
+        std::shared_ptr<boost::asio::thread_pool> threadpool;
+    };
+
+    // verify that all tasks that are posted do get run even if the service is unregistered mid execution
+    TEST_F(TestAsyncWorkServiceEndToEnd, TestTasksRunningAtShutdownSafety)
+    {
+        using namespace std::literals::chrono_literals;
+
+        auto ctx = framework.GetBundleContext();
+        cppmicroservices::ServiceRegistration<postWithSynchronization> reg;
+        constexpr int total_tasks = 6;
+
+        {
+            // thread pool size should be the total tasks +1 so that we make sure that we don't deadlock because all 6
+            // tasks are allocated and waiting on tasks behind them in the queue. However, it has to be small enough
+            // that not all the 'external' tasks and 'internal' tasks can be allocated at the same time
+            auto param = std::make_shared<AsyncWorkServiceThreadPoolWithSync>(total_tasks + 1);
+            reg = ctx.RegisterService<postWithSynchronization, cppmicroservices::async::AsyncWorkService>(param);
+        }
+
+        // ASYNCWORKSERVICE
+        auto srAWS = ctx.GetServiceReference<postWithSynchronization>();
+        auto asyncWorkService = ctx.GetService<postWithSynchronization>(srAWS);
+        // CA
+        ::test::InstallAndStartConfigAdmin(ctx);
+
+        std::vector<std::shared_future<void>> futs;
+
+        // wait for all post_task objects to be started before second post is made.
+        // the '+1' here is to wait till right before the unregister call is made.
+        // This tries to ensure that some of these internal post_tasks will be posted but not allocated to a thread
+        auto waitForInitialWave = std::make_shared<Barrier>(total_tasks + 1);
+        std::atomic<int> counter(total_tasks);
+
+        for (int i = 0; i < total_tasks; ++i)
+        {
+            std::packaged_task<void()> post_task(
+                [asyncWorkService, &waitForInitialWave, &counter]() mutable
+                {
+                    std::packaged_task<void()> post_task_internal(
+                        [&counter]() mutable
+                        {
+                            // give some time for the unregister call to be successful
+                            std::this_thread::sleep_for(500ms);
+                            --counter;
+                        });
+
+                    auto myFut = post_task_internal.get_future().share();
+
+                    // post with blocker to wait for all post_tasks to make it
+                    asyncWorkService->postWithSync(std::move(post_task_internal), waitForInitialWave);
+                    // don't store a shared_ptr to the asyncWorkService or it'll never be destroyed
+                    asyncWorkService.reset();
+                    myFut.get();
+                });
+
+            futs.emplace_back(post_task.get_future().share());
+
+            asyncWorkService->post(std::move(post_task));
+        }
+        asyncWorkService.reset();
+
+        waitForInitialWave->Wait();
+        reg.Unregister();
+
+        for (auto& fut : futs)
+        {
+            fut.get();
+        }
+
+        ASSERT_EQ(counter, 0);
+    }
 }; // namespace test

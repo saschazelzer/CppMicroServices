@@ -135,6 +135,7 @@ namespace cppmicroservices
                 MockAsyncWorkService() : cppmicroservices::async::AsyncWorkService() {}
 
                 MOCK_METHOD1(post, void(std::packaged_task<void()>&&));
+                MOCK_METHOD0(waitForAllPostedTasksToRun, void());
             };
         } // namespace async
     }     // namespace cmimpl

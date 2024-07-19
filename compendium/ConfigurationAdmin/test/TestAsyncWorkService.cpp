@@ -157,6 +157,11 @@ namespace test
         {
             task();
         }
+
+        void
+        waitForAllPostedTasksToRun() override
+        {
+        }
     };
 
     class AsyncWorkServiceStdAsync : public cppmicroservices::async::AsyncWorkService
@@ -168,6 +173,11 @@ namespace test
         post(std::packaged_task<void()>&& task) override
         {
             std::future<void> f = std::async(std::launch::async, [task = std::move(task)]() mutable { task(); });
+        }
+
+        void
+        waitForAllPostedTasksToRun() override
+        {
         }
     };
 
@@ -212,6 +222,28 @@ namespace test
             Result result(handler);
 
             boost::asio::post(threadpool->get_executor(), [handler = std::move(handler)]() mutable { handler(); });
+        }
+        void
+        waitForAllPostedTasksToRun() override
+        {
+            try
+            {
+                if (threadpool)
+                {
+                    try
+                    {
+                        threadpool->join();
+                    }
+                    catch (...)
+                    {
+                        //
+                    }
+                }
+            }
+            catch (...)
+            {
+                //
+            }
         }
 
       private:

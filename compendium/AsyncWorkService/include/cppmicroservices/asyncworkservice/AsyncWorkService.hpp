@@ -67,6 +67,12 @@ namespace cppmicroservices
              * with the std::packaged_task<void()> in order to wait on the async task.
              */
             virtual void post(std::packaged_task<void()>&& task) = 0;
+
+            /**
+             * Method to wait for all tasks posted to the service to finish
+             */
+            virtual void
+            waitForAllPostedTasksToRun() = 0;
         };
     } // namespace async
 } // namespace cppmicroservices

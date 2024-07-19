@@ -1271,42 +1271,6 @@ namespace cppmicroservices
             framework.WaitForStop(std::chrono::milliseconds::zero());
         }
 
-        class Barrier
-        {
-          public:
-            Barrier(std::size_t count) : threshold(count), count(count), generation(0) {}
-
-            void
-            Wait()
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                auto gen = generation;
-                if (--count == 0)
-                {
-                    generation++;
-                    count = threshold;
-                    cond.notify_all();
-                }
-                else
-                {
-                    cond.wait(lock, [this, gen] { return gen != generation; });
-                }
-            }
-
-          private:
-            std::mutex mutex;
-            std::condition_variable cond;
-            std::size_t threshold;
-            std::size_t count;
-            std::size_t generation;
-        };
-
-        /**
-         * Test that the Modified method on a component configuration that is
-         * lazily loaded and requires two configuration objects where one is
-         * twice and the other once, the the component is initialized and then
-         * the second config object is updated for the second time. This should trigger a modified() call.
-         */
         TEST(ConfigAdminComponentCreationRace, TestConfigNotifierSafeWithNoListenersForPid)
         {
             auto [framework, compMetadata, mockRegistry, fakeLogger, notifier, configAdminService] = mySetUp();
@@ -1355,7 +1319,7 @@ namespace cppmicroservices
             auto mockCompInstance3 = std::make_shared<MockComponentInstance>();
             compConfig3->SetComponentInstancePair(InstanceContextPair(mockCompInstance, mockCompContext));
             compConfig3->Initialize();
-            Barrier sync_point(5); // 5 threads to synchronize
+            test::Barrier sync_point(5); // 5 threads to synchronize
 
             auto frameworkT = std::async(
                 std::launch::async,
