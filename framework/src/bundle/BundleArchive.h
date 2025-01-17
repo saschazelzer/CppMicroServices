@@ -111,7 +111,7 @@ namespace cppmicroservices
          * @param path Entry to get reference to.
          * @return BundleResource to entry.
          */
-        BundleResource GetResource(std::string const& path) const;
+        BundleResource GetResource(std::string const& path, bool bypassPrefix = false) const;
 
         /**
          * Returns a list of all the paths to entries within the bundle matching

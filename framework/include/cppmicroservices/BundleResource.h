@@ -299,7 +299,7 @@ namespace cppmicroservices
         uint32_t GetCrc32() const;
 
       private:
-        BundleResource(std::string const& file, std::shared_ptr<BundleArchive const> const& archive);
+        BundleResource(std::string const& file, std::shared_ptr<BundleArchive const> const& archive, bool bypassPrefix = false);
 
         BundleResource(int index, std::shared_ptr<BundleArchive const> const& archive);
 

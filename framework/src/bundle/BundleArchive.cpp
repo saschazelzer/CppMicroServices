@@ -110,13 +110,13 @@ namespace cppmicroservices
     }
 
     BundleResource
-    BundleArchive::GetResource(std::string const& path) const
+    BundleArchive::GetResource(std::string const& path, bool bypassPrefix) const
     {
         if (!resourceContainer)
         {
             return BundleResource();
         }
-        BundleResource result(path, this->shared_from_this());
+        BundleResource result(path, this->shared_from_this(), bypassPrefix);
         if (result)
             return result;
         return BundleResource();

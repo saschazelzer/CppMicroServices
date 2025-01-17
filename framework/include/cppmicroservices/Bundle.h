@@ -569,7 +569,7 @@ namespace cppmicroservices
          *
          * @throws std::invalid_argument if this bundle is not initialized.
          */
-        BundleResource GetResource(std::string const& path) const;
+        BundleResource GetResource(std::string const& path, bool bypassPrefix = false) const;
 
         /**
          * Returns resources in this bundle.

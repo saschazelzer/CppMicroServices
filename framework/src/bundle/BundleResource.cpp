@@ -58,10 +58,11 @@ namespace cppmicroservices
     BundleResourcePrivate::InitFilePath(std::string const& file)
     {
         std::string normalizedFile = file;
+        /*
         if (normalizedFile.empty() || normalizedFile[0] != '/')
         {
             normalizedFile = '/' + normalizedFile;
-        }
+        }*/
 
         std::string rawPath;
         std::size_t index = normalizedFile.find_last_of('/');
@@ -100,12 +101,15 @@ namespace cppmicroservices
 
     BundleResource::BundleResource(BundleResource const& resource) : d(resource.d) {}
 
-    BundleResource::BundleResource(std::string const& file, std::shared_ptr<BundleArchive const> const& archive)
+    BundleResource::BundleResource(std::string const& file, std::shared_ptr<BundleArchive const> const& archive, bool bypassPrefix)
         : d(std::make_shared<BundleResourcePrivate>(archive))
     {
         d->InitFilePath(file);
 
-        d->stat.filePath = d->archive->GetResourcePrefix() + d->path + d->fileName;
+        if (bypassPrefix)
+            d->stat.filePath = d->path + d->fileName;
+        else
+            d->stat.filePath = d->archive->GetResourcePrefix() + d->path + d->fileName;
 
         d->archive->GetResourceContainer()->GetStat(d->stat);
 

@@ -309,7 +309,7 @@ namespace cppmicroservices
     }
 
     BundleResource
-    Bundle::GetResource(std::string const& path) const
+    Bundle::GetResource(std::string const& path, bool const bypassPrefix) const
     {
         if (!d)
         {
@@ -317,7 +317,7 @@ namespace cppmicroservices
         }
 
         d->CheckUninstalled();
-        return d->barchive ? d->barchive->GetResource(path) : BundleResource();
+        return d->barchive ? d->barchive->GetResource(path, bypassPrefix) : BundleResource();
     }
 
     std::vector<BundleResource>
