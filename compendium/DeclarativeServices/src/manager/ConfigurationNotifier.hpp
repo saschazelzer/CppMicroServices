@@ -47,7 +47,7 @@ namespace cppmicroservices
                                      unsigned long changeCount)
                 : pid(std::move(pid))
                 , event(std::move(evt))
-                , newProperties(properties)
+                , newProperties(std::move(properties))
                 , newChangeCount(changeCount)
             {
             }

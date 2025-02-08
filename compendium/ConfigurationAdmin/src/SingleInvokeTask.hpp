@@ -42,7 +42,7 @@ namespace cppmicroservices::cmimpl
     class SingleInvokeTask
     {
       public:
-        SingleInvokeTask(std::shared_ptr<PostTask> postedTask) : task(postedTask) {}
+        SingleInvokeTask(std::shared_ptr<PostTask> postedTask) : task(std::move(postedTask)) {}
         SingleInvokeTask(SingleInvokeTask const& other) = delete;
         SingleInvokeTask& operator=(SingleInvokeTask const& other) = delete;
         SingleInvokeTask(SingleInvokeTask&& other) = delete;

@@ -57,8 +57,8 @@ namespace
                                         std::string _serviceScope,
                                         std::vector<std::string> _interfaces)
             : metadataIndex(_metadataIndex)
-            , serviceScope(_serviceScope)
-            , interfaces(_interfaces)
+            , serviceScope(std::move(_serviceScope))
+            , interfaces(std::move(_interfaces))
         {
         }
 
@@ -156,7 +156,7 @@ namespace
     {
         ServiceMetadataParserInvalidState(std::size_t _metadataIndex, std::string _errorOutput, bool _isPartial = false)
             : metadataIndex(_metadataIndex)
-            , errorOutput(_errorOutput)
+            , errorOutput(std::move(_errorOutput))
             , isPartial(_isPartial)
         {
         }

@@ -58,7 +58,7 @@ namespace cppmicroservices::scrimpl
         void
         addTask(std::shared_ptr<PostTask> postedTask)
         {
-            task = postedTask;
+            task = std::move(postedTask);
         }
 
         template <typename... Args>

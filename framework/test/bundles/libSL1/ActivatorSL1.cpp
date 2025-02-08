@@ -59,7 +59,7 @@ namespace cppmicroservices
 
       public:
         SL1ServiceTrackerCustomizer(std::shared_ptr<SL1BundlePropsImpl> propService, BundleContext const& bc)
-            : bundlePropsService(propService)
+            : bundlePropsService(std::move(propService))
             , context(bc)
         {
         }

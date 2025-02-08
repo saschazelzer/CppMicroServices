@@ -66,13 +66,13 @@ namespace
                                           std::size_t _minCardinality,
                                           std::size_t _maxCardinality)
             : metadataIndex(_metadataIndex)
-            , interface(_interface)
-            , name(_name)
-            , cardinality(_cardinality)
-            , policy(_policy)
-            , policyOption(_policyOption)
-            , scope(_scope)
-            , target(_target)
+            , interface(std::move(_interface))
+            , name(std::move(_name))
+            , cardinality(std::move(_cardinality))
+            , policy(std::move(_policy))
+            , policyOption(std::move(_policyOption))
+            , scope(std::move(_scope))
+            , target(std::move(_target))
             , minCardinality(_minCardinality)
             , maxCardinality(_maxCardinality)
         {
@@ -332,7 +332,7 @@ namespace
                                             std::string _errorOutput,
                                             bool _isPartial = false)
             : metadataIndex(_metadataIndex)
-            , errorOutput(_errorOutput)
+            , errorOutput(std::move(_errorOutput))
             , isPartial(_isPartial)
         {
         }

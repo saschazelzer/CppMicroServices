@@ -48,7 +48,7 @@ namespace cppmicroservices
 
     ServiceRegistrationBase::ServiceRegistrationBase(
         std::shared_ptr<ServiceRegistrationBasePrivate> registrationPrivate)
-        : d(registrationPrivate)
+        : d(std::move(registrationPrivate))
     {
     }
 
