@@ -487,12 +487,12 @@ namespace cppmicroservices
             // Ensure notification from original GetConfiguration has run.
             configAdmin.WaitForAllAsync();
 
-            cppmicroservices::ServiceProperties ms1Props {
+            auto ms1Props = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("test.pid")}
-            };
-            cppmicroservices::ServiceProperties ms2Props {
+            });
+            auto ms2Props = cppmicroservices::ServiceProperties({
                 {std::string("component.name"), std::string("test.pid2")}
-            };
+            });
 
             auto reg1 = bundleContext.RegisterService<cppmicroservices::service::cm::ManagedService>(mockManagedService,
                                                                                                      ms1Props);
@@ -602,12 +602,12 @@ namespace cppmicroservices
             pidProp["pid"] = std::string("factory");
             AnyMap nameProp { AnyMap::UNORDERED_MAP_CASEINSENSITIVE_KEYS };
             nameProp["name"] = std::string("factory2");
-            cppmicroservices::ServiceProperties ms1Props {
+            auto ms1Props = cppmicroservices::ServiceProperties({
                 {std::string("service"), pidProp}
-            };
-            cppmicroservices::ServiceProperties ms2Props {
+            });
+            auto ms2Props = cppmicroservices::ServiceProperties({
                 {std::string("component"), nameProp}
-            };
+            });
 
             auto reg1 = bundleContext.RegisterService<cppmicroservices::service::cm::ManagedServiceFactory>(
                 mockManagedServiceFactory,
@@ -703,12 +703,12 @@ namespace cppmicroservices
             EXPECT_CALL(*mockManagedServiceFactory2, Updated(testing::_, testing::_)).Times(0);
             EXPECT_CALL(*mockManagedServiceFactory2, Removed(testing::_)).Times(0);
 
-            cppmicroservices::ServiceProperties msProps {
+            auto msProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("test.pid")}
-            };
-            cppmicroservices::ServiceProperties msfProps {
+            });
+            auto msfProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("factory")}
-            };
+            });
 
             auto reg1 = bundleContext.RegisterService<cppmicroservices::service::cm::ManagedServiceFactory>(
                 mockManagedServiceFactory,
@@ -817,12 +817,12 @@ namespace cppmicroservices
             EXPECT_CALL(*mockManagedServiceFactory, Removed(std::string { "factory~instance1" }))
                 .WillOnce(testing::InvokeWithoutArgs(f2));
 
-            cppmicroservices::ServiceProperties msProps {
+            auto msProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("test.pid")}
-            };
-            cppmicroservices::ServiceProperties msfProps {
+            });
+            auto msfProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("factory")}
-            };
+            });
 
             auto reg1 = bundleContext.RegisterService<cppmicroservices::service::cm::ManagedServiceFactory>(
                 mockManagedServiceFactory,
@@ -997,12 +997,12 @@ namespace cppmicroservices
             // Ensure notification from original GetConfiguration has run.
             configAdmin.WaitForAllAsync();
 
-            cppmicroservices::ServiceProperties msProps {
+            auto msProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("test.pid")}
-            };
-            cppmicroservices::ServiceProperties msfProps {
+            });
+            auto msfProps = cppmicroservices::ServiceProperties({
                 {std::string("service.pid"), std::string("factory")}
-            };
+            });
 
             auto reg1 = bundleContext.RegisterService<cppmicroservices::service::cm::ManagedServiceFactory>(
                 mockManagedServiceFactory,

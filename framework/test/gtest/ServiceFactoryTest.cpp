@@ -128,9 +128,9 @@ TEST_F(ServiceFactoryTest, TestGetServiceReturnsIncompleteMap)
 
     ServiceRegistration<ITestServiceA, ITestServiceB> reg1 = context.RegisterService<ITestServiceA, ITestServiceB>(
         ToFactory(sf),
-        {
+        ServiceProperties({
             {Constants::SERVICE_SCOPE, Any(Constants::SCOPE_PROTOTYPE)}
-    });
+    }));
 
     auto sref1 = context.GetServiceReference<ITestServiceA>();
     ASSERT_TRUE(static_cast<bool>(sref1));
@@ -158,9 +158,9 @@ TEST_F(ServiceFactoryTest, TestGetServiceThrows)
 
     ServiceRegistration<ITestServiceA> reg1
         = context.RegisterService<ITestServiceA>(ToFactory(sf),
-                                                 {
+                                                 ServiceProperties({
                                                      {Constants::SERVICE_SCOPE, Any(Constants::SCOPE_PROTOTYPE)}
-    });
+    }));
 
     auto sref = context.GetServiceReference<ITestServiceA>();
     ASSERT_TRUE(static_cast<bool>(sref));
@@ -191,9 +191,9 @@ TEST_F(ServiceFactoryTest, TestGetServiceObjectThrows)
     EXPECT_CALL(*sf, UngetService(::testing::_, ::testing::_, ::testing::_)).Times(0);
 
     (void)context.RegisterService<ITestServiceA>(ToFactory(sf),
-                                                 {
+                                                 ServiceProperties({
                                                      {Constants::SERVICE_SCOPE, Any(Constants::SCOPE_PROTOTYPE)}
-    });
+    }));
 
     auto sref = context.GetServiceReference<ITestServiceA>();
     auto serviceObjects = context.GetServiceObjects<ITestServiceA>(sref);
@@ -213,9 +213,9 @@ TEST_F(ServiceFactoryTest, TestGetServiceReturnsNull)
 
     ServiceRegistration<ITestServiceA> reg1
         = context.RegisterService<ITestServiceA>(ToFactory(sf),
-                                                 {
+                                                 ServiceProperties({
                                                      {Constants::SERVICE_SCOPE, Any(Constants::SCOPE_PROTOTYPE)}
-    });
+    }));
 
     auto sref = context.GetServiceReference<ITestServiceA>();
     ASSERT_TRUE(static_cast<bool>(sref));

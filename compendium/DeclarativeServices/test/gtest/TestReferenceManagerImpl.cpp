@@ -355,9 +355,9 @@ namespace cppmicroservices
                 // mandatory, dynamic-reluctant - no state change, no callback expected
                 // mandatory, dynamic-greedy - no state change, no callback expected
                 auto reg2 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                  {
+                                                                  ServiceProperties({
                                                                       {Constants::SERVICE_RANKING, Any(10)}
-                });
+                }));
                 EXPECT_EQ(refManager.IsSatisfied(), true);
                 EXPECT_EQ(unsatisfiedNotificationCount,
                           ReferencePolicyOption_Greedy == fakeMetadata.policyOption
@@ -652,9 +652,9 @@ namespace cppmicroservices
             ASSERT_TRUE(refManager.GetTargetReferences().empty());
             auto reg = bc.RegisterService<dummy::Reference1>(
                 ToFactory(std::make_shared<MockFactory>()),
-                {
+                ServiceProperties({
                     {cppmicroservices::Constants::SERVICE_SCOPE, cppmicroservices::Constants::SCOPE_BUNDLE}
-            });
+            }));
             ASSERT_TRUE(refManager.GetTargetReferences().empty())
                 << "service registered with BUNDLE scope must not match the tracker";
             reg.Unregister();
@@ -666,9 +666,9 @@ namespace cppmicroservices
 
             reg = bc.RegisterService<dummy::Reference1>(
                 ToFactory(std::make_shared<MockFactory>()),
-                {
+                ServiceProperties({
                     {cppmicroservices::Constants::SERVICE_SCOPE, cppmicroservices::Constants::SCOPE_PROTOTYPE}
-            });
+            }));
             ASSERT_FALSE(refManager.GetTargetReferences().empty())
                 << "service registered with PROTOTYPE scope must match the tracker";
             reg.Unregister();
@@ -690,15 +690,15 @@ namespace cppmicroservices
             ASSERT_FALSE(refManager.IsOptional() ? false : refManager.IsSatisfied());
 
             (void)bc.RegisterService<dummy::Reference1>(ToFactory(std::make_shared<MockFactory>()),
-                                                        {
+                                                        ServiceProperties({
                                                             {constants::SERVICE_SCOPE, constants::SCOPE_BUNDLE}
-            });
+            }));
             ASSERT_FALSE(refManager.IsOptional() ? false : refManager.IsSatisfied());
 
             (void)bc.RegisterService<dummy::Reference1>(ToFactory(std::make_shared<MockFactory>()),
-                                                        {
+                                                        ServiceProperties({
                                                             {"foo", std::string("bar")}
-            });
+            }));
             ASSERT_TRUE(refManager.IsSatisfied());
         }
 

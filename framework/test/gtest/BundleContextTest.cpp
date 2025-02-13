@@ -246,19 +246,19 @@ INSTANTIATE_TEST_SUITE_P(BundleContextTestParameterized,
                          ::testing::Values(
                              BundleContParamType {
                                  { { "", 5 } },
-                                 { { { "service.ranking", 2 } },
-                                  { { "service.ranking", 0 } },
-                                  { { "service.ranking", 4 } },
-                                  { { "service.ranking", 1 } },
-                                  { { "service.ranking", 3 } } }
+                                 { ServiceProperties({ { "service.ranking", 2 } }),
+                                  ServiceProperties({ { "service.ranking", 0 } }),
+                                  ServiceProperties({ { "service.ranking", 4 } }),
+                                  ServiceProperties({ { "service.ranking", 1 } }),
+                                  ServiceProperties({ { "service.ranking", 3 } }) }
 },
                              BundleContParamType {
                                  { { "", 5 }, { "(Key1=Val*)", 3 }, { "(Key2=Val*)", 2 } },
-                                 { { { "service.ranking", 2000 }, { "Key1", std::string("Val1") } },
-                                   { { "service.ranking", 15 }, { "Key1", std::string("Val2") } },
-                                   { { "service.ranking", 0 }, { "Key1", std::string("Val2") } },
-                                   { { "service.ranking", 1506 }, { "Key2", std::string("Val1") } },
-                                   { { "service.ranking", 905 }, { "Key2", std::string("Val1") } } } }));
+                                 { ServiceProperties({ { "service.ranking", 2000 }, { "Key1", std::string("Val1") } }),
+                                   ServiceProperties({ { "service.ranking", 15 }, { "Key1", std::string("Val2") } }),
+                                   ServiceProperties({ { "service.ranking", 0 }, { "Key1", std::string("Val2") } }),
+                                   ServiceProperties({ { "service.ranking", 1506 }, { "Key2", std::string("Val1") } }),
+                                   ServiceProperties({ { "service.ranking", 905 }, { "Key2", std::string("Val1") } }) } }));
 
 TEST_P(BundleContextTestParam, TestGetServiceReferenceOrdering)
 {

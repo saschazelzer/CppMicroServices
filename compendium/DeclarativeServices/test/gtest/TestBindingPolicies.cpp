@@ -536,9 +536,9 @@ namespace cppmicroservices
             // registering a new service with a higher rank should cause a re-binding and use of the new service
             auto higherRankedSvc = bc.RegisterService<test::Interface1>(
                 std::make_shared<test::InterfaceImpl>("higher ranked Interface1"),
-                {
+                ServiceProperties({
                     { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(higherRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicGreedyMandatoryUnary depends on higher "
@@ -550,9 +550,9 @@ namespace cppmicroservices
             // registering a new service with a lower rank should NOT cause re-binding and use of the new service
             auto lowerRankedSvc
                 = bc.RegisterService<test::Interface1>(std::make_shared<test::InterfaceImpl>("lower ranked Interface1"),
-                                                       {
+                                                       ServiceProperties({
                                                            { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(lowerRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicGreedyMandatoryUnary depends on higher "
@@ -639,9 +639,9 @@ namespace cppmicroservices
             // registering a new service with a higher rank should cause a re-binding and use of the new service
             auto higherRankedSvc = bc.RegisterService<test::Interface1>(
                 std::make_shared<test::InterfaceImpl>("higher ranked Interface1"),
-                {
+                ServiceProperties({
                     { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(higherRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicGreedyOptionalUnary depends on higher "
@@ -653,9 +653,9 @@ namespace cppmicroservices
             // registering a new service with a lower rank should NOT cause re-binding and use of the new service
             auto lowerRankedSvc
                 = bc.RegisterService<test::Interface1>(std::make_shared<test::InterfaceImpl>("lower ranked Interface1"),
-                                                       {
+                                                       ServiceProperties({
                                                            { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(lowerRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicGreedyOptionalUnary depends on higher "
@@ -733,9 +733,9 @@ namespace cppmicroservices
             // registering a new service with a higher rank should not cause re-binding
             auto higherRankedSvc = bc.RegisterService<test::Interface1>(
                 std::make_shared<test::InterfaceImpl>("higher ranked Interface1"),
-                {
+                ServiceProperties({
                     { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(higherRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicReluctantMandatoryUnary depends on "
@@ -747,9 +747,9 @@ namespace cppmicroservices
             // registering a new service with a lower rank should NOT cause re-binding
             auto lowerRankedSvc
                 = bc.RegisterService<test::Interface1>(std::make_shared<test::InterfaceImpl>("lower ranked Interface1"),
-                                                       {
+                                                       ServiceProperties({
                                                            { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(lowerRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicReluctantMandatoryUnary depends on "
@@ -834,9 +834,9 @@ namespace cppmicroservices
             // registering a new service with a higher rank should not cause re-binding
             auto higherRankedSvc = bc.RegisterService<test::Interface1>(
                 std::make_shared<test::InterfaceImpl>("higher ranked Interface1"),
-                {
+                ServiceProperties({
                     { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(higherRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicReluctantOptionalUnary depends on "
@@ -848,9 +848,9 @@ namespace cppmicroservices
             // registering a new service with a lower rank should NOT cause re-binding
             auto lowerRankedSvc
                 = bc.RegisterService<test::Interface1>(std::make_shared<test::InterfaceImpl>("lower ranked Interface1"),
-                                                       {
+                                                       ServiceProperties({
                                                            { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(lowerRankedSvc);
             EXPECT_NO_THROW(svc->ExtendedDescription());
             EXPECT_STREQ("ServiceComponentDynamicReluctantOptionalUnary depends on "
@@ -913,16 +913,16 @@ namespace cppmicroservices
                 // registering a new service with a higher rank should not cause re-binding
                 auto higherRankedSvc = bc.RegisterService<test::Interface1>(
                     std::make_shared<test::InterfaceImpl>("higher ranked Interface1"),
-                    {
+                    ServiceProperties({
                         { Constants::SERVICE_RANKING, Any(10000) }
-                });
+                }));
 
                 // registering a new service with a lower rank should NOT cause re-binding
                 auto lowerRankedSvc = bc.RegisterService<test::Interface1>(
                     std::make_shared<test::InterfaceImpl>("lower ranked Interface1"),
-                    {
+                    ServiceProperties({
                         { Constants::SERVICE_RANKING, Any(1) }
-                });
+                }));
 
                 depSvcReg.Unregister();
                 higherRankedSvc.Unregister();
@@ -1059,26 +1059,26 @@ namespace cppmicroservices
                 .Times(GetParam().numLoggerCalls);
 
             auto depSvcReg = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                   {
+                                                                   ServiceProperties({
                                                                        { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 1);
 
             auto depSvcReg1 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                    {
+                                                                    ServiceProperties({
                                                                         { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg1);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 2);
             EXPECT_EQ(bindNotificationCount, GetParam().numBindNotifs[1]);
 
             auto depSvcReg2 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                    {
+                                                                    ServiceProperties({
                                                                         { Constants::SERVICE_RANKING, Any(100) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg2);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 3);
@@ -1206,9 +1206,9 @@ namespace cppmicroservices
                 .Times(GetParam().numLoggerCalls);
 
             auto depSvcReg = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                   {
+                                                                   ServiceProperties({
                                                                        { Constants::SERVICE_RANKING, Any(10000) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 1);
@@ -1216,9 +1216,9 @@ namespace cppmicroservices
             EXPECT_EQ(satisfiedNotificationCount, GetParam().numSatisfiedNotifs[0]);
 
             auto depSvcReg1 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                    {
+                                                                    ServiceProperties({
                                                                         { Constants::SERVICE_RANKING, Any(1) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg1);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 2);
@@ -1226,9 +1226,9 @@ namespace cppmicroservices
             EXPECT_EQ(satisfiedNotificationCount, GetParam().numSatisfiedNotifs[1]);
 
             auto depSvcReg2 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                    {
+                                                                    ServiceProperties({
                                                                         { Constants::SERVICE_RANKING, Any(100) }
-            });
+            }));
             ASSERT_TRUE(depSvcReg2);
 
             EXPECT_EQ(refManager.GetBoundReferences().size(), 3);
@@ -1273,9 +1273,9 @@ namespace cppmicroservices
             for (int i = 0; i < 15; i++)
             {
                 auto depSvcReg = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                       {
+                                                                       ServiceProperties({
                                                                            { Constants::SERVICE_RANKING, Any(i) }
-                });
+                }));
                 ASSERT_TRUE(depSvcReg);
             }
 
@@ -1304,19 +1304,19 @@ namespace cppmicroservices
             {
                 auto depSvcReg
                     = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                            {
+                                                            ServiceProperties({
                                                                 { Constants::SERVICE_RANKING, Any(10000) }
-                });
+                }));
 
                 auto depSvcReg1 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                        {
+                                                                        ServiceProperties({
                                                                             { Constants::SERVICE_RANKING, Any(1) }
-                });
+                }));
 
                 auto depSvcReg2 = bc.RegisterService<dummy::Reference1>(std::make_shared<dummy::Reference1>(),
-                                                                        {
+                                                                        ServiceProperties({
                                                                             { Constants::SERVICE_RANKING, Any(100) }
-                });
+                }));
 
                 depSvcReg.Unregister();
                 depSvcReg1.Unregister();

@@ -84,10 +84,10 @@ namespace test
         registerSvc(std::string const name, std::string const property, std::string const propertyValue)
         {
             auto mockService = std::make_shared<ServiceImplT>();
-            cppmicroservices::ServiceProperties serviceProps {
+            auto serviceProps = cppmicroservices::ServiceProperties({
                 {std::string(cppmicroservices::service::component::ComponentConstants::COMPONENT_NAME),name},
                 {property, propertyValue}
-            };
+            });
             return context.RegisterService<ServiceInterfaceT>(mockService, serviceProps);
         } 
  

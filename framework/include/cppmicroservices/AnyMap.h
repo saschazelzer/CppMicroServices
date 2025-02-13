@@ -144,6 +144,8 @@ namespace cppmicroservices
             const_iter(ociter&& it);
             const_iter(uociter&& it, iter_type type);
 
+            iterator& operator=(iterator const& x);
+
             reference operator*() const;
             pointer operator->() const;
 

@@ -23,10 +23,7 @@
 #ifndef CPPMICROSERVICES_SERVICEPROPERTIES_H
 #define CPPMICROSERVICES_SERVICEPROPERTIES_H
 
-#include "cppmicroservices/Any.h"
-
-#include <string>
-#include <unordered_map>
+#include "cppmicroservices/AnyMap.h"
 
 namespace cppmicroservices
 {
@@ -37,10 +34,8 @@ namespace cppmicroservices
      * A hash table with std::string as the key type and Any as the value
      * type. It is typically used for passing service properties to
      * BundleContext::RegisterService.
-     *
-     * Deprecated. Use AnyMap instead.
      */
-    using ServiceProperties = std::unordered_map<std::string, Any>;
+    using ServiceProperties = AnyMap;
 } // namespace cppmicroservices
 
 #endif // CPPMICROSERVICES_SERVICEPROPERTIES_H

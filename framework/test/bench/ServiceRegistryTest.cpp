@@ -120,10 +120,10 @@ BENCHMARK_DEFINE_F(ServiceRegistryFixture, RegisterServicesWithRank)
             InterfaceMapPtr iMapCopy(std::make_shared<InterfaceMap>(*interfaceMap));
             auto start = std::chrono::high_resolution_clock::now();
             auto reg = fc.RegisterService(iMapCopy,
-                                          {
+                                          ServiceProperties({
                                               {Constants::SERVICE_RANKING,
                                                Any(static_cast<int>(i))}
-            }); // benchmark the call to RegisterService
+            })); // benchmark the call to RegisterService
             auto end = std::chrono::high_resolution_clock::now();
             US_UNUSED(reg);
             auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);

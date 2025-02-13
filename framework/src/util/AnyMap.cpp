@@ -256,6 +256,45 @@ namespace cppmicroservices
         }
     }
 
+    any_map::const_iter&
+    any_map::const_iter::operator=(any_map::const_iter const& x)
+    {
+        switch (type)
+        {
+            case ORDERED:
+                delete it.o;
+                break;
+            case UNORDERED:
+                delete it.uo;
+                break;
+            case UNORDERED_CI:
+                delete it.uoci;
+                break;
+            case NONE:
+                break;
+        }
+
+        type = x.type;
+        switch (type)
+        {
+            case ORDERED:
+                this->it.o = new ociter(x.o_it());
+                break;
+            case UNORDERED:
+                this->it.uo = new uociter(x.uo_it());
+                break;
+            case UNORDERED_CI:
+                this->it.uoci = new uocciiter(x.uoci_it());
+                break;
+            case NONE:
+                this->it = {nullptr};
+                break;
+            default:
+                throw std::logic_error("invalid iterator type");
+        }
+        return *this;
+    }
+
     any_map::const_iter::reference
     any_map::const_iter::operator*() const
     {
@@ -341,6 +380,10 @@ namespace cppmicroservices
     bool
     any_map::const_iter::operator==(iterator const& x) const
     {
+        if (type != x.type)
+        {
+            return false;
+        }
         switch (type)
         {
             case ORDERED:
@@ -350,7 +393,7 @@ namespace cppmicroservices
             case UNORDERED_CI:
                 return uoci_it() == x.uoci_it();
             case NONE:
-                return x.type == NONE;
+                return true;
             default:
                 throw std::logic_error("invalid iterator type");
         }

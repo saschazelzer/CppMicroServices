@@ -259,36 +259,36 @@ namespace cppmicroservices
             factoryObjReturningNullPtr = std::make_shared<TestBundleHServiceFactoryReturnsNullPtr>();
             factoryServiceReturningNullPtr
                 = context.RegisterService<TestBundleH>(ToFactory(factoryObjReturningNullPtr),
-                                                       ServiceProperties {
+                                                       ServiceProperties({
                                                            {std::string("returns_nullptr"), Any(true)}
-            });
+            }));
 
             factoryObjReturningWrongInterface = std::make_shared<TestBundleHServiceFactoryInterfaceNotFound>();
             factoryServiceReturningWrongInterface
                 = context.RegisterService<TestBundleH>(ToFactory(factoryObjReturningWrongInterface),
-                                                       ServiceProperties {
+                                                       ServiceProperties({
                                                            {std::string("returns_wrong_interface"), Any(true)}
-            });
+            }));
 
             factoryObjThrowFromGetService = std::make_shared<TestBundleHServiceFactoryGetServiceThrow>();
             factoryServiceThrowFromGetService
                 = context.RegisterService<TestBundleH>(ToFactory(factoryObjThrowFromGetService),
-                                                       ServiceProperties {
+                                                       ServiceProperties({
                                                            {std::string("getservice_exception"), Any(true)}
-            });
+            }));
 
             factoryObjThrowFromUngetService = std::make_shared<TestBundleHServiceFactoryUngetServiceThrow>();
             factoryServiceThrowFromUngetService
                 = context.RegisterService<TestBundleH>(ToFactory(factoryObjThrowFromUngetService),
-                                                       ServiceProperties {
+                                                       ServiceProperties({
                                                            {std::string("ungetservice_exception"), Any(true)}
-            });
+            }));
 
             context.RegisterService<TestBundleH>(
                 std::shared_ptr<ServiceFactory>(new TestBundleHServiceFactoryRecursion),
-                ServiceProperties {
+                ServiceProperties({
                     {std::string("getservice_recursion"), Any(true)}
-            });
+            }));
 
             prototypeFactoryObj = std::make_shared<TestBundleHPrototypeServiceFactory>();
             prototypeFactoryService

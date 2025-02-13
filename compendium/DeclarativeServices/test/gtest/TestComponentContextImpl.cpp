@@ -213,9 +213,9 @@ namespace cppmicroservices
 
                 auto sReg = bc.RegisterService<dummy::ServiceImpl>(
                     ToFactory(mockServiceFactory),
-                    {
+                    ServiceProperties({
                         {cppmicroservices::Constants::SERVICE_SCOPE, Any(publishedScope)}
-                });
+                }));
 
                 auto bundleContext = GetFramework().GetBundleContext();
                 auto mockRefMgrFoo
@@ -313,9 +313,9 @@ namespace cppmicroservices
             auto fooServ1 = std::make_shared<test::Foo>();
             auto reg1 = GetFramework().GetBundleContext().RegisterService<test::Foo>(
                 fooServ1,
-                {
-                    { cppmicroservices::Constants::SERVICE_RANKING, 20 }
-            });
+                ServiceProperties({
+                    {cppmicroservices::Constants::SERVICE_RANKING, 20}
+            }));
             auto refs = GetFramework().GetBundleContext().GetServiceReferences(us_service_interface_iid<test::Foo>());
             std::set<cppmicroservices::ServiceReferenceBase> refsSet;
             refsSet.insert(refs.begin(), refs.end());
@@ -405,9 +405,9 @@ namespace cppmicroservices
 
             auto sReg = GetFramework().GetBundleContext().RegisterService<dummy::ServiceImpl>(
                 ToFactory(mockServiceFactory),
-                {
+                ServiceProperties({
                     {cppmicroservices::Constants::SERVICE_SCOPE, cppmicroservices::Constants::SCOPE_BUNDLE}
-            });
+            }));
 
             auto mockCompConfig = std::make_shared<MockComponentConfiguration>();
             ON_CALL(*mockCompConfig, GetBundle).WillByDefault(::testing::Return(GetFramework()));
@@ -509,9 +509,9 @@ namespace cppmicroservices
             auto fooServ1 = std::make_shared<test::Foo>();
             auto reg1 = GetFramework().GetBundleContext().RegisterService<test::Foo>(
                 fooServ1,
-                {
-                    { cppmicroservices::Constants::SERVICE_RANKING, 20 }
-            });
+                ServiceProperties({
+                    {cppmicroservices::Constants::SERVICE_RANKING, 20}
+            }));
             auto refs = GetFramework().GetBundleContext().GetServiceReferences(us_service_interface_iid<test::Foo>());
             std::set<cppmicroservices::ServiceReferenceBase> refsSet;
             refsSet.insert(refs.begin(), refs.end());

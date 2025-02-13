@@ -364,9 +364,9 @@ TEST_F(ServiceTrackerTestFixture, GetTrackingCount)
     auto svcReg = context.RegisterService<MyInterfaceOne>(std::make_shared<MyServiceOne>());
     ASSERT_EQ(tracker.GetTrackingCount(), 1);
 
-    svcReg.SetProperties({
+    svcReg.SetProperties(ServiceProperties({
         {"foo", Any { 1 }}
-    });
+    }));
     ASSERT_EQ(tracker.GetTrackingCount(), 2);
 
     (void)context.RegisterService<MyInterfaceOne>(std::make_shared<MyServiceOne>());
@@ -646,9 +646,9 @@ TEST_F(ServiceTrackerTestFixture, TestReOpenServiceTrackerWithCustomizer)
 
     tracker->Open();
     auto svcReg2 = context.RegisterService<MyInterfaceOne>(std::make_shared<MyServiceOne>());
-    svcReg2.SetProperties({
+    svcReg2.SetProperties(ServiceProperties({
         {"test", Any(std::string("foo"))}
-    });
+    }));
     tracker->Close();
 }
 

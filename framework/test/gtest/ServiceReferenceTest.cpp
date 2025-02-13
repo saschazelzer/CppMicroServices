@@ -174,9 +174,9 @@ TEST_F(ServiceReferenceTest, TestGetServiceReferenceWithRanking)
         auto impl = std::make_shared<TestServiceA>();
         implArr.push_back(impl);
         (void)context.RegisterService<ServiceNS::ITestServiceA>(impl,
-                                                                {
+                                                                ServiceProperties({
                                                                     {Constants::SERVICE_RANKING, i}
-        });
+        }));
     }
 
     auto sRefArr = context.GetServiceReferences<ServiceNS::ITestServiceA>();
@@ -207,9 +207,9 @@ TEST_F(ServiceReferenceTest, TestGetServiceReferenceWithMultipleRegistrationsPer
             auto impl = std::make_shared<TestServiceA>();
             implArr.push_back(impl);
             (void)context.RegisterService<ServiceNS::ITestServiceA>(impl,
-                                                                    {
+                                                                    ServiceProperties({
                                                                         {Constants::SERVICE_RANKING, rank}
-            });
+            }));
         }
     }
 
@@ -242,9 +242,9 @@ TEST_F(ServiceReferenceTest, TestGetServiceReferenceWithModifiedProperties)
     ASSERT_EQ(context.GetServiceReference<ServiceNS::ITestServiceA>(), regArr[0].GetReference());
 
     // modify the lower priority registration to bump up the priority
-    regArr[1].SetProperties({
+    regArr[1].SetProperties(ServiceProperties({
         {Constants::SERVICE_RANKING, 10}
-    });
+    }));
     ASSERT_EQ(context.GetServiceReference<ServiceNS::ITestServiceA>(), regArr[1].GetReference());
 }
 
