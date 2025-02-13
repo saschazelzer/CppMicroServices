@@ -82,7 +82,6 @@ software provided on the GitHub-hosted runners.
 For information about the specific versions of software the runners
 use, please see the following resources:
 
-- `ubuntu-20.04 Runner Information <https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2004-Readme.md>`_
 - `ubuntu-22.04 Runner Information <https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md>`_
 - `macos-13 Runner Information <https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md>`_
 - `macos-14 Runner Information <https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md>`_
@@ -91,9 +90,8 @@ use, please see the following resources:
 
 Below is a list of tested compiler/OS combinations:
 
-- GCC 7.5.0 (Ubuntu 20.04)
 - GCC 11.3.0 (Ubuntu 22.04)
-- Clang 11.0.0 (Ubuntu 20.04)
+- Clang 14.0.0 (Ubuntu 22.04)
 - Apple Clang from Xcode 15.2.0 (OS X 13.3.0)
 - Apple Clang from Xcode 15.4.0 (OS X 14.5.0)
 - Visual Studio 2019
