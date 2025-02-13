@@ -349,8 +349,22 @@ namespace cppmicroservices
             // that are returned, one for each BundlePrivate that's created.
             for (auto const& ba : barchives)
             {
-                auto d = std::make_shared<BundlePrivate>(coreCtx, ba);
-                installedBundles.emplace_back(MakeBundle(d));
+                try
+                {
+                    auto d = std::make_shared<BundlePrivate>(coreCtx, ba);
+                    installedBundles.emplace_back(MakeBundle(d));
+                }
+                catch(const std::runtime_error& re)
+                {
+                    // speciffic handling for runtime_error
+                    std::cerr << "Runtime error: " << re.what() << std::endl;
+                }
+                catch(const std::exception& ex)
+                {
+                    // speciffic handling for all exceptions extending std::exception, except
+                    // std::runtime_error which is handled explicitly
+                    std::cerr << "Error occurred: " << ex.what() << std::endl;
+                }
             }
 
             // For each bundle that we created, add into the map of location->bundle, completing the
@@ -372,6 +386,9 @@ namespace cppmicroservices
         }
         catch (...)
         {
+            // catch any other errors (that we have no information about)
+            std::cerr << "Failed to install bundle library at " + location + ": " + util::GetLastExceptionStr() << std::endl;
+
             for (auto& ba : barchives)
             {
                 ba->Purge();
